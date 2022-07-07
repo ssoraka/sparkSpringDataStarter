@@ -1,4 +1,4 @@
-package com.example.sparkdata;
+package com.example.unsafe_sparkdata;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;

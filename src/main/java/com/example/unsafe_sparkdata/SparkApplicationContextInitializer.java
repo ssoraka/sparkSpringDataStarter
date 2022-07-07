@@ -1,10 +1,11 @@
-package com.example.sparkdata;
+package com.example.unsafe_sparkdata;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 import org.reflections.Reflections;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.beans.Introspector;
 import java.lang.reflect.Proxy;
@@ -13,6 +14,11 @@ import java.util.Set;
 public class SparkApplicationContextInitializer implements ApplicationContextInitializer {
     @Override
     public void initialize(ConfigurableApplicationContext context) {
+
+        AnnotationConfigApplicationContext tempContext = new AnnotationConfigApplicationContext("com.example.unsafe_sparkdata");
+        SparkInvocationHandlerFactory factory = tempContext.getBean(SparkInvocationHandlerFactory.class);
+        tempContext.close();
+
         registerSparkBean(context);
         String packToScan = context.getEnvironment().getProperty("spark.packages-to-scan");
 
@@ -21,7 +27,7 @@ public class SparkApplicationContextInitializer implements ApplicationContextIni
         sparkRepoInterfaces.forEach(sparkRepoInterface -> {
             Object golem = Proxy.newProxyInstance(sparkRepoInterface.getClassLoader(),
                     new Class[]{sparkRepoInterface},
-                    ih );
+                    factory.create(sparkRepoInterface));
             context.getBeanFactory()
                     .registerSingleton(Introspector.decapitalize(sparkRepoInterface.getSimpleName()), golem);
         });

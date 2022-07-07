@@ -1,29 +1,36 @@
-package com.example.sparkdata;
+package com.example.unsafe_sparkdata;
 
-import javax.sound.midi.MetaEventListener;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
+
+import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class SparkInvocationHandlerFactory {
 
-    private DataExtracterResolver resolver;
-    private Map<String, TransformationSpider> spiderMap;
+    private final DataExtracterResolver resolver;
+    private final Map<String, TransformationSpider> spiderMap;
+    private final Map<String, Finalizer> finalizerMap;
+
+    @Setter
+    private ConfigurableApplicationContext realContext;
 
 
     public SparkInvocationHandler create(Class<? extends SparkRepository> sparkRepoInterface) {
         Class<?> modelClass = getModelClass(sparkRepoInterface);
-
         String pathToData = modelClass.getAnnotation(Source.class).value();
         Set<String> fieldNames = getFieldNames(modelClass);
-        DataExtracter dataExtracter = resolver.resolve(pathToData);
-
-
-
+        DataExtractor dataExtractor = resolver.resolve(pathToData);
         Map<Method, List<SparkTransformation>> transformationChain = new HashMap<>();
+        Map<Method, Finalizer> method2Finalizer = new HashMap<>();
 
         Method[] methods = sparkRepoInterface.getMethods();
         for (Method method : methods) {
@@ -35,16 +42,26 @@ public class SparkInvocationHandlerFactory {
                 if (!spiderName.isEmpty()) {
                     currentSpider = spiderMap.get(spiderName);
                 }
-                transformations.add(currentSpider.getTransformation(methods));
+                transformations.add(currentSpider.getTransformation(methodWords, fieldNames));
             }
+            transformationChain.put(method, transformations);
+
+            String finalizerName = "collect";
+            if (methodWords.size() == 1) {
+                finalizerName = Introspector.decapitalize(methodWords.get(0));
+            }
+            method2Finalizer.put(method, finalizerMap.get(finalizerName));
         }
 
 
-        SparkInvocationHandler.builder()
+        return SparkInvocationHandler.builder()
                 .modelClass(modelClass)
                 .pathToData(pathToData)
-                .dataExtracter(dataExtracter)
+                .dataExtractor(dataExtractor)
                 .transformationChain(transformationChain)
+                .finalizerMap(method2Finalizer)
+                .context(realContext)
+                .build();
     }
 
 

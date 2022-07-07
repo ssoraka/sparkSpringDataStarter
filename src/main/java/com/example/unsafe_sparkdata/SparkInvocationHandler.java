@@ -1,4 +1,4 @@
-package com.example.sparkdata;
+package com.example.unsafe_sparkdata;
 
 import lombok.Builder;
 import org.apache.spark.sql.Dataset;
@@ -15,7 +15,7 @@ public class SparkInvocationHandler implements InvocationHandler {
 
     private Class<?> modelClass;
     private String pathToData;
-    private DataExtracter dataExtracter;
+    private DataExtractor dataExtractor;
     private Map<Method, List<SparkTransformation>> transformationChain;
     private Map<Method, Finalizer> finalizerMap;
     private ConfigurableApplicationContext context;
@@ -24,13 +24,13 @@ public class SparkInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        Dataset<Row> dataset = dataExtracter.load(pathToData, context);
+        Dataset<Row> dataset = dataExtractor.load(pathToData, context);
 
         for (SparkTransformation transformation : transformationChain.get(method)) {
             dataset = transformation.transform(dataset);
         }
 
 
-        return finalizerMap.get(method).doAction(dataset);
+        return finalizerMap.get(method).doAction(dataset, modelClass);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.sparkdata;
+package com.example.unsafe_sparkdata;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
