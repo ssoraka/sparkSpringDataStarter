@@ -19,6 +19,8 @@ public class SparkApplicationContextInitializer implements ApplicationContextIni
         SparkInvocationHandlerFactory factory = tempContext.getBean(SparkInvocationHandlerFactory.class);
         tempContext.close();
 
+        factory.setRealContext(context);
+
         registerSparkBean(context);
         String packToScan = context.getEnvironment().getProperty("spark.packages-to-scan");
 
