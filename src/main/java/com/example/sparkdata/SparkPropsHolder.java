@@ -1,4 +1,4 @@
-package com.example.jpoint.sparkdata2021;
+package com.example.sparkdata;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

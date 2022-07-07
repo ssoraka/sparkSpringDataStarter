@@ -1,5 +1,6 @@
 package com.example.jpoint.sparkdata2021;
 
+import com.example.sparkdata.Source;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

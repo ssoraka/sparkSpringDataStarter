@@ -1,4 +1,4 @@
-package com.example.jpoint.sparkdata2021;
+package com.example.sparkdata;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
