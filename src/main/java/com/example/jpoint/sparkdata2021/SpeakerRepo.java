@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SpeakerRepo extends SparkRepository<Speaker> {
     List<Speaker> findByAgeBetween(int min, int max);
-    List<Speaker> findByAgeGreaterThan(int min);
+    List<Speaker> findByAgeGreaterThanCount(int min);
 }

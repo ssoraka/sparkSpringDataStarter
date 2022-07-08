@@ -6,6 +6,8 @@ import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component("collect")
 public class CollectFinalizer implements Finalizer {
     @Override
