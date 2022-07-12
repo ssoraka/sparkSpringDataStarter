@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class Criminal {
     private long id;
     private String name;
-    private long age;
+    private long number;
 }
