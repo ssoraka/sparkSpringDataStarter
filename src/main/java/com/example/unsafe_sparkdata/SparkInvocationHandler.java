@@ -20,6 +20,7 @@ public class SparkInvocationHandler implements InvocationHandler {
     private Map<Method, List<Tuple2<SparkTransformation, List<String>>>> transformationChain;
     private Map<Method, Finalizer> finalizerMap;
     private ConfigurableApplicationContext context;
+    private PostFinalizer postFinalizer;
 
 
     @Override
@@ -33,6 +34,8 @@ public class SparkInvocationHandler implements InvocationHandler {
             dataset = transformation.transform(dataset, columnNames, new OrderedBag<>(args));
         }
 
-        return finalizerMap.get(method).doAction(dataset, modelClass);
+        Finalizer finalizer = finalizerMap.get(method);
+        Object retVal = finalizer.doAction(dataset, modelClass);
+        return postFinalizer.postFinalize(retVal);
     }
 }

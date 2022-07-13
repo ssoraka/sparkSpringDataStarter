@@ -19,7 +19,14 @@ public class SparkData2021Application {
 //        List<Criminal> criminals = criminalRepo.findByNumberGreaterThanOrderByNumber(20);
 //        criminals.forEach(System.out::println);
 
-        System.out.println(criminalRepo.findByNameContainsCount("ova"));
+//        System.out.println(criminalRepo.findByNameContainsCount("ova"));
+
+
+        List<Criminal> criminals = criminalRepo.findByNameContains("ova");
+        List<Order> orders = criminals.get(0).getOrders();
+        for (Order order : orders) {
+            System.out.println(order);
+        }
 
     }
 }

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SparkInvocationHandlerFactory {
 
-    private final DataExtracterResolver resolver;
+    private final DataExtractorResolver resolver;
     private final Map<String, TransformationSpider> spiderMap;
     private final Map<String, Finalizer> finalizerMap;
 
@@ -61,6 +61,7 @@ public class SparkInvocationHandlerFactory {
                 .dataExtractor(dataExtractor)
                 .transformationChain(transformationChain)
                 .finalizerMap(method2Finalizer)
+                .postFinalizer(new LazyCollectionInjectorPostFinalizer(realContext))
                 .context(realContext)
                 .build();
     }

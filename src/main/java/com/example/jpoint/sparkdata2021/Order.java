@@ -7,18 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Source("data/criminals.csv")
-public class Criminal {
-    private long id;
+@Source("data/orders.csv")
+public class Order {
     private String name;
-    private long number;
-
-    @ForiegnKey("criminalId")
-    private List<Order> orders;
+    private String desk;
+    private long price;
+    private long criminalId;
 }

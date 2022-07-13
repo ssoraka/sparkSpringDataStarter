@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class DataExtracterResolver {
+public class DataExtractorResolver {
 
     @Autowired
     private Map<String, DataExtractor> extractorMap;
